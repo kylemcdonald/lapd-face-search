@@ -233,9 +233,8 @@
   <h1>LAPD Face Search</h1>
   <h2>Search over 9,000 LAPD headshots</h2>
   <p>
-    Upload a photo to find potential matches using facial recognition technology.
-    <br />
-    All processing happens locally in your browser for privacy. <br/>Blurry, low-resolution photos will not match.
+    Face recognition happens on your device and images are not uploaded.
+    <br/>Blurry, low-resolution photos will not match.
   </p>
 
   {#if !loaded}
