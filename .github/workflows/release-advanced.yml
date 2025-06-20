@@ -1,0 +1,69 @@
+name: Advanced Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # Required for changelog generation
+          
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+          
+      - name: Install dependencies
+        run: npm ci
+        
+      - name: Build project
+        run: npm run build
+        
+      - name: Create release zip
+        run: |
+          cd dist
+          zip -r ../release.zip .
+          
+      - name: Generate changelog
+        id: changelog
+        run: |
+          # Get the previous tag
+          PREVIOUS_TAG=$(git describe --tags --abbrev=0 HEAD~1 2>/dev/null || echo "")
+          
+          if [ -z "$PREVIOUS_TAG" ]; then
+            # If no previous tag, get all commits
+            CHANGELOG=$(git log --oneline --no-merges)
+          else
+            # Get commits since the previous tag
+            CHANGELOG=$(git log --oneline --no-merges ${PREVIOUS_TAG}..HEAD)
+          fi
+          
+          echo "changelog<<EOF" >> $GITHUB_OUTPUT
+          echo "$CHANGELOG" >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+          
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: release.zip
+          body: |
+            ## Changes in this release:
+            
+            ```
+            ${{ steps.changelog.outputs.changelog }}
+            ```
+            
+            ## Installation
+            1. Download the `release.zip` file
+            2. Extract the contents
+            3. Open `index.html` in your browser
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} 
