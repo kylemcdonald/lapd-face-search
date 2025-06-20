@@ -66,6 +66,16 @@ lapd-face-search/
    npm run build
    ```
 
+## Deployment
+
+You can easily deploy your own copy of this application to any web hosting service:
+
+1. **Download a release**: Visit [https://github.com/kylemcdonald/lapd-face-search/releases](https://github.com/kylemcdonald/lapd-face-search/releases) and download the latest `.zip` file
+2. **Extract and upload**: Extract the contents and upload them to any web hosting service (Netlify, Vercel, GitHub Pages, etc.)
+3. **That's it!**: The application will work immediately without any additional setup
+
+The app runs entirely in the browser, so no server-side processing is required.
+
 ## Usage
 
 1. Open the application in your web browser
@@ -104,3 +114,19 @@ The officer database includes:
 - **Processing Speed**: ~1-3 seconds per image
 - **Accuracy**: Optimized for clear, front-facing photos
 - **Browser Support**: Modern browsers with WebGL support
+
+## Releasing
+
+To create a new release:
+
+1. **Tag a new version**: Create a new tag with a version number (e.g., `v1.0.3`)
+   ```bash
+   git tag v1.0.3
+   ```
+
+2. **Push the tag**: Push the tag to trigger the release workflow
+   ```bash
+   git push origin v1.0.3
+   ```
+
+The GitHub Actions workflow will automatically build and create a release with the compiled files.

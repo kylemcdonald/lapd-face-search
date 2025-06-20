@@ -226,16 +226,29 @@
 </script>
 
 <main>
-  <h1>LAPD FACE SEARCH</h1>
-  <h2>Find LAPD cops with face recognition</h2>
+  <div class="about-link">
+    <a href="https://github.com/kylemcdonald/lapd-face-search/" target="_blank" rel="noopener noreferrer" title="About">?</a>
+  </div>
+
+  <h1>LAPD Face Search</h1>
+  <h2>Search over 9,000 LAPD headshots</h2>
   <p>
-    Search over 9000 headshots of LAPD cops using face recognition.<br
-    />Analysis happens on your device and images are not uploaded.<br />Blurry,
-    low-resolution photos will not match.
+    Upload a photo to find potential matches using facial recognition technology.
+    <br />
+    All processing happens locally in your browser for privacy. <br/>Blurry, low-resolution photos will not match.
   </p>
 
   {#if !loaded}
-    <div class="status">Loading...</div>
+    <form>
+      <label for="image-input" class="loading-label">Loading...</label>
+      <input
+        id="image-input"
+        type="file"
+        accept="image/*"
+        hidden=""
+        disabled
+      />
+    </form>
   {/if}
 
   {#if loaded}
@@ -296,6 +309,7 @@
     padding: 2rem;
     text-align: center;
     width: 100%;
+    position: relative;
   }
   h1 {
     font-size: 4em;
@@ -417,6 +431,34 @@
     padding-top: 2em;
   }
 
+  .about-link {
+    position: fixed;
+    top: 1rem;
+    right: 1rem;
+    z-index: 1000;
+  }
+
+  .about-link a {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background-color: red;
+    color: white;
+    text-decoration: none;
+    border-radius: 50%;
+    font-weight: bold;
+    font-size: 1.2rem;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 0 8px rgba(0, 0, 0, 1.0);
+  }
+
+  .about-link a:hover {
+    background-color: #cc0000;
+    transform: scale(1.1);
+  }
+
   @media (max-width: 768px) {
     main {
       padding: 1rem;
@@ -438,6 +480,31 @@
     }
     .cops {
       grid-template-columns: 1fr;
+    }
+  }
+
+  .loading-label {
+    background-color: #666 !important;
+    border-color: #666 !important;
+    color: #999 !important;
+    cursor: not-allowed !important;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+  
+  .loading-label:hover {
+    background-color: #666 !important;
+    color: #999 !important;
+  }
+
+  @keyframes pulse {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+    100% {
+      opacity: 1;
     }
   }
 </style>
