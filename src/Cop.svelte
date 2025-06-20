@@ -21,7 +21,7 @@
     }
   });
 
-  let imageSrc = $derived(`/images/${cop.filename}`);
+  let imageSrc = $derived(`./images/${cop.filename}`);
 
   let url = $derived.by(() => {
     if (cop.serial && cop.name) {
