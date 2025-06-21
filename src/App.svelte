@@ -1,5 +1,5 @@
 <script>
-  import { onMount } from "svelte";
+  import { onMount, tick } from "svelte";
   import * as faceapi from "@vladmandic/face-api";
 
   import Cop from "./Cop.svelte";
@@ -13,6 +13,7 @@
   let databaseLoaded = $state(false);
   let uploadedImageSrc = $state();
   let matches = $state([]);
+  let working = $state(false);
 
   let loaded = $derived(faceApiLoaded && databaseLoaded);
 
@@ -104,9 +105,13 @@
   }
 
   function handleImageFile(e) {
+    working = true;
     const reader = new FileReader();
     reader.onload = function (e) {
       uploadedImageSrc = e.target.result;
+      // instead of listening for an onload event in the image
+      // just call recognize after svelte re-renders
+      tick().then(recognize);
     };
     reader.readAsDataURL(e.target.files[0]);
   }
@@ -122,6 +127,7 @@
         status =
           "No faces detected in image. Please try a different image with clearly visible faces.";
         matches = [];
+        working = false;
         return;
       }
 
@@ -210,6 +216,7 @@
       console.error("Error in face recognition:", error);
       // updateStatus('Error processing uploaded image for face recognition.', 'red');
     }
+    working = false;
   }
 
   function calculateEuclideanDistance(desc1, desc2) {
@@ -251,20 +258,26 @@
 
   {#if loaded}
     <form>
-      <label for="image-input">Select Photo</label>
+      <label for="image-input" class={{ "loading-label": working }}>
+        {#if working}
+          Processing...
+        {:else}
+          Select Photo
+        {/if}
+      </label>
       <input
         oninput={handleImageFile}
         id="image-input"
         type="file"
         accept="image/*"
         hidden=""
+        disabled={working}
       />
     </form>
 
     <img
       bind:this={uploadedImage}
       src={uploadedImageSrc}
-      onload={recognize}
       alt="User uploaded face"
       class="uploaded-photo"
       style:display={"none"}
@@ -420,13 +433,6 @@
     height: 2px;
     background: linear-gradient(to right, transparent, red, transparent);
     margin: 2rem 0;
-  }
-
-  .results-title {
-    margin-top: 2em;
-    margin-bottom: 1em;
-    border-top: 1px solid #333;
-    padding-top: 2em;
   }
 
   .about-link {
