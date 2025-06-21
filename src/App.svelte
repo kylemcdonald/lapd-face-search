@@ -1,5 +1,5 @@
 <script>
-  import { onMount } from "svelte";
+  import { onMount, tick } from "svelte";
   import * as faceapi from "@vladmandic/face-api";
 
   import Cop from "./Cop.svelte";
@@ -13,6 +13,7 @@
   let databaseLoaded = $state(false);
   let uploadedImageSrc = $state();
   let matches = $state([]);
+  let working = $state(false);
 
   let loaded = $derived(faceApiLoaded && databaseLoaded);
 
@@ -104,9 +105,13 @@
   }
 
   function handleImageFile(e) {
+    working = true;
     const reader = new FileReader();
     reader.onload = function (e) {
       uploadedImageSrc = e.target.result;
+      // instead of listening for an onload event in the image
+      // just call recognize after svelte re-renders
+      tick().then(recognize);
     };
     reader.readAsDataURL(e.target.files[0]);
   }
@@ -122,6 +127,7 @@
         status =
           "No faces detected in image. Please try a different image with clearly visible faces.";
         matches = [];
+        working = false;
         return;
       }
 
@@ -210,6 +216,7 @@
       console.error("Error in face recognition:", error);
       // updateStatus('Error processing uploaded image for face recognition.', 'red');
     }
+    working = false;
   }
 
   function calculateEuclideanDistance(desc1, desc2) {
@@ -227,45 +234,50 @@
 
 <main>
   <div class="about-link">
-    <a href="https://github.com/kylemcdonald/lapd-face-search/" target="_blank" rel="noopener noreferrer" title="About">?</a>
+    <a
+      href="https://github.com/kylemcdonald/lapd-face-search/"
+      target="_blank"
+      rel="noopener noreferrer"
+      title="About">?</a
+    >
   </div>
 
   <h1>LAPD Face Search</h1>
   <h2>Search over 9,000 LAPD headshots</h2>
   <p>
     Face recognition happens on your device and images are not uploaded.
-    <br/>Blurry, low-resolution photos will not match.
+    <br />Blurry, low-resolution photos will not match.
   </p>
 
   {#if !loaded}
     <form>
       <label for="image-input" class="loading-label">Loading...</label>
-      <input
-        id="image-input"
-        type="file"
-        accept="image/*"
-        hidden=""
-        disabled
-      />
+      <input id="image-input" type="file" accept="image/*" hidden="" disabled />
     </form>
   {/if}
 
   {#if loaded}
     <form>
-      <label for="image-input">Select Photo</label>
+      <label for="image-input" class={{ "loading-label": working }}>
+        {#if working}
+          Processing...
+        {:else}
+          Select Photo
+        {/if}
+      </label>
       <input
         oninput={handleImageFile}
         id="image-input"
         type="file"
         accept="image/*"
         hidden=""
+        disabled={working}
       />
     </form>
 
     <img
       bind:this={uploadedImage}
       src={uploadedImageSrc}
-      onload={recognize}
       alt="User uploaded face"
       class="uploaded-photo"
       style:display={"none"}
@@ -294,7 +306,7 @@
     <div class="cops">
       {#each matches as cop}
         <div class="cop">
-          <Cop cop={cop.data} index={cop.index} distance={cop.distance} />
+          <Cop cop={cop.data} index={cop.index} />
         </div>
       {/each}
     </div>
@@ -423,13 +435,6 @@
     margin: 2rem 0;
   }
 
-  .results-title {
-    margin-top: 2em;
-    margin-bottom: 1em;
-    border-top: 1px solid #333;
-    padding-top: 2em;
-  }
-
   .about-link {
     position: fixed;
     top: 1rem;
@@ -450,7 +455,7 @@
     font-weight: bold;
     font-size: 1.2rem;
     transition: all 0.2s ease-in-out;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 1.0);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 1);
   }
 
   .about-link a:hover {
@@ -489,7 +494,7 @@
     cursor: not-allowed !important;
     animation: pulse 1.5s ease-in-out infinite;
   }
-  
+
   .loading-label:hover {
     background-color: #666 !important;
     color: #999 !important;

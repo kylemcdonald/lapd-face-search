@@ -1,7 +1,5 @@
 <script>
-  let { cop, distance, index } = $props();
-
-  const DEV = import.meta.env.DEV;
+  let { cop, index } = $props();
 
   const errorImage =
     "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNCAzMkM0MS42NzMxIDMyIDU2IDM3LjM3MjYgNTYgNDRDNTYgNTAuNjI3NCA0MS42NzMxIDU2IDI0IDU2QzYuMzI2ODggNTYgLTggNTAuNjI3NCAtOCA0Qy04IDM3LjM3MjYgNi4zMjY4OCAzMiAyNCAzMloiIGZpbGw9IiM5QTlCOCIvPgo8L3N2Zz4=";
