@@ -4,6 +4,42 @@
   const errorImage =
     "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iODAiIGhlaWdodD0iODAiIHZpZXdCb3g9IjAgMCA4MCA4MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjgwIiBoZWlnaHQ9IjgwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNCAzMkM0MS42NzMxIDMyIDU2IDM3LjM3MjYgNTYgNDRDNTYgNTAuNjI3NCA0MS42NzMxIDU2IDI0IDU2QzYuMzI2ODggNTYgLTggNTAuNjI3NCAtOCA0Qy04IDM3LjM3MjYgNi4zMjY4OCAzMiAyNCAzMloiIGZpbGw9IiM5QTlCOCIvPgo8L3N2Zz4=";
 
+  // Helper functions for formatting data
+  function formatHeight(heightInches) {
+    if (!heightInches || heightInches === 0) return "N/A";
+    const feet = Math.floor(heightInches / 12);
+    const inches = heightInches % 12;
+    return `${feet}'${inches}"`;
+  }
+
+  function formatWeight(weightLbs) {
+    if (!weightLbs || weightLbs === 0) return "N/A";
+    return `${weightLbs}lbs`;
+  }
+
+  function formatPay(payAmount) {
+    if (!payAmount || payAmount === 0) return "N/A";
+    return `$${Math.round(payAmount).toLocaleString()}`;
+  }
+
+  function calculateAge(birthYear) {
+    if (!birthYear) return "N/A";
+    const currentYear = new Date().getFullYear();
+    return currentYear - birthYear;
+  }
+
+  function formatPhysicalInfo() {
+    const age = calculateAge(cop.born);
+    const height = formatHeight(cop.height);
+    const weight = formatWeight(cop.weight);
+    
+    if (age === "N/A" && height === "N/A" && weight === "N/A") {
+      return "STATS N/A";
+    }
+    
+    return `${age} / ${height} / ${weight}`;
+  }
+
   let name = $derived.by(() => {
     if (cop.name) {
       return cop.name;
@@ -50,6 +86,8 @@
   <div class="cop-info">
     <div class="name">{name}</div>
     <div class="serial">Serial: {cop.serial || "N/A"}</div>
+    <div class="physical-info">{formatPhysicalInfo()}</div>
+    <div class="pay">Pay: {formatPay(cop.pay)}</div>
     <div class="link">
       {#if url && hasSpaces}
         <a href={url} target="_blank" class="view-profile-link">View Profile</a>
@@ -82,6 +120,18 @@
   .serial {
     font-size: 1.2em;
     color: rgba(255, 255, 255, 0.7);
+  }
+
+  .physical-info {
+    font-size: 1.1em;
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 2px;
+  }
+
+  .pay {
+    font-size: 1.1em;
+    color: rgba(255, 255, 255, 0.8);
+    margin-top: 2px;
   }
 
   .name {
