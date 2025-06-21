@@ -227,26 +227,25 @@
 
 <main>
   <div class="about-link">
-    <a href="https://github.com/kylemcdonald/lapd-face-search/" target="_blank" rel="noopener noreferrer" title="About">?</a>
+    <a
+      href="https://github.com/kylemcdonald/lapd-face-search/"
+      target="_blank"
+      rel="noopener noreferrer"
+      title="About">?</a
+    >
   </div>
 
   <h1>LAPD Face Search</h1>
   <h2>Search over 9,000 LAPD headshots</h2>
   <p>
     Face recognition happens on your device and images are not uploaded.
-    <br/>Blurry, low-resolution photos will not match.
+    <br />Blurry, low-resolution photos will not match.
   </p>
 
   {#if !loaded}
     <form>
       <label for="image-input" class="loading-label">Loading...</label>
-      <input
-        id="image-input"
-        type="file"
-        accept="image/*"
-        hidden=""
-        disabled
-      />
+      <input id="image-input" type="file" accept="image/*" hidden="" disabled />
     </form>
   {/if}
 
@@ -294,7 +293,7 @@
     <div class="cops">
       {#each matches as cop}
         <div class="cop">
-          <Cop cop={cop.data} index={cop.index} distance={cop.distance} />
+          <Cop cop={cop.data} index={cop.index} />
         </div>
       {/each}
     </div>
@@ -450,7 +449,7 @@
     font-weight: bold;
     font-size: 1.2rem;
     transition: all 0.2s ease-in-out;
-    box-shadow: 0 0 8px rgba(0, 0, 0, 1.0);
+    box-shadow: 0 0 8px rgba(0, 0, 0, 1);
   }
 
   .about-link a:hover {
@@ -489,7 +488,7 @@
     cursor: not-allowed !important;
     animation: pulse 1.5s ease-in-out infinite;
   }
-  
+
   .loading-label:hover {
     background-color: #666 !important;
     color: #999 !important;
