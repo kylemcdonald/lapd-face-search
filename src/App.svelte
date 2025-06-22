@@ -243,10 +243,11 @@
   </div>
 
   <h1>LAPD Face Search</h1>
-  <h2>Search over 9,000 LAPD headshots</h2>
+  <h2>Cops covering up their badges? ID them with their faces instead.</h2>
   <p>
-    Face recognition happens on your device and images are not uploaded.
-    <br />Blurry, low-resolution photos will not match.
+    Search over 9,000 LAPD headshots. Processing happens on your device. No
+    photos or data are transmitted or saved. Blurry, low-resolution photos will
+    not match.
   </p>
 
   {#if !loaded}
