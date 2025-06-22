@@ -14,6 +14,7 @@
   let uploadedImageSrc = $state();
   let matches = $state([]);
   let working = $state(false);
+  let isDragOver = $state(false);
 
   let loaded = $derived(faceApiLoaded && databaseLoaded);
 
@@ -114,6 +115,33 @@
       tick().then(recognize);
     };
     reader.readAsDataURL(e.target.files[0]);
+  }
+
+  function handleDragOver(e) {
+    e.preventDefault();
+    isDragOver = true;
+  }
+
+  function handleDragLeave(e) {
+    e.preventDefault();
+    isDragOver = false;
+  }
+
+  function handleDrop(e) {
+    e.preventDefault();
+    isDragOver = false;
+    
+    const files = e.dataTransfer.files;
+    if (files.length > 0 && files[0].type.startsWith('image/')) {
+      const file = files[0];
+      working = true;
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        uploadedImageSrc = e.target.result;
+        tick().then(recognize);
+      };
+      reader.readAsDataURL(file);
+    }
   }
 
   async function recognize() {
@@ -229,6 +257,18 @@
   }
   onMount(() => {
     loadFaceApiModels();
+    
+    // Add document-level drag and drop handlers
+    document.addEventListener('dragover', handleDragOver);
+    document.addEventListener('dragleave', handleDragLeave);
+    document.addEventListener('drop', handleDrop);
+    
+    // Cleanup function
+    return () => {
+      document.removeEventListener('dragover', handleDragOver);
+      document.removeEventListener('dragleave', handleDragLeave);
+      document.removeEventListener('drop', handleDrop);
+    };
   });
 </script>
 
@@ -259,9 +299,11 @@
 
   {#if loaded}
     <form>
-      <label for="image-input" class={{ "loading-label": working }}>
+      <label for="image-input" class={{ "loading-label": working, "drag-over": isDragOver }}>
         {#if working}
           Processing...
+        {:else if isDragOver}
+          Drop Photo
         {:else}
           Select Photo
         {/if}
@@ -322,7 +364,13 @@
     text-align: center;
     width: 100%;
     position: relative;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    transition: all 0.2s ease-in-out;
   }
+
   h1 {
     font-size: 4em;
     font-weight: 700;
@@ -499,6 +547,18 @@
   .loading-label:hover {
     background-color: #666 !important;
     color: #999 !important;
+  }
+
+  .drag-over {
+    background-color: black !important;
+    border-color: red !important;
+    border-style: dashed !important;
+    color: white !important;
+  }
+
+  .drag-over:hover {
+    background-color: black !important;
+    color: white !important;
   }
 
   @keyframes pulse {
